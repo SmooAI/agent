@@ -1,0 +1,15 @@
+node_modules
+dist
+.turbo
+.next
+*.log
+.DS_Store
+coverage
+.env
+.env.local
+.vscode
+*.tsbuildinfo
+
+# Rust
+target/
+Cargo.lock
