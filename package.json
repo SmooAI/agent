@@ -1,0 +1,32 @@
+{
+    "name": "@smooai/agent-monorepo",
+    "version": "0.0.0",
+    "private": true,
+    "description": "Rust-native AI agent framework — checkpointing, tool system, LLM client. Shared across Big Smooth and the smooai platform.",
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/SmooAI/agent.git"
+    },
+    "homepage": "https://github.com/SmooAI/agent",
+    "bugs": {
+        "url": "https://github.com/SmooAI/agent/issues"
+    },
+    "type": "module",
+    "scripts": {
+        "rust:check": "cd rust && cargo check --workspace",
+        "rust:fmt": "cd rust && cargo fmt --all",
+        "rust:fmt:check": "cd rust && cargo fmt --all -- --check",
+        "rust:clippy": "cd rust && cargo clippy --workspace --all-targets -- -D warnings",
+        "rust:test": "cd rust && cargo test --workspace",
+        "changeset": "changeset",
+        "ci:publish": "changeset publish"
+    },
+    "devDependencies": {
+        "@changesets/cli": "^2.27.10"
+    },
+    "packageManager": "pnpm@10.6.1",
+    "engines": {
+        "node": ">=22"
+    }
+}

@@ -1,0 +1,64 @@
+name: Release (Changesets 🦋)
+
+on:
+    workflow_dispatch:
+    push:
+        branches:
+            - main
+
+concurrency:
+    group: release
+    cancel-in-progress: false
+
+env:
+    CI: true
+
+jobs:
+    version:
+        timeout-minutes: 30
+        runs-on: ubuntu-latest
+        permissions:
+            contents: write
+            pull-requests: write
+            id-token: write
+            actions: write
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+              with:
+                  token: ${{ secrets.GH_PAT }}
+
+            - name: Setup pnpm
+              uses: pnpm/action-setup@v4
+
+            - name: Setup Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version: 22
+                  cache: 'pnpm'
+
+            - name: Install dependencies
+              run: pnpm install --frozen-lockfile
+
+            - name: Version Update 🦋
+              id: changesets
+              uses: changesets/action@v1
+              with:
+                  commit: '🦋 New version release'
+                  title: '🦋 New version release'
+                  publish: pnpm ci:publish
+                  createGithubReleases: true
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GH_PAT }}
+
+            - name: Auto-Merge Changeset PR
+              run: |
+                  PR_NUMBER=$(gh pr list --state open --head changeset-release/main --json number --jq '.[0].number')
+                  if [[ -n "$PR_NUMBER" && "$PR_NUMBER" != "null" ]]; then
+                    echo "Found Changeset PR #$PR_NUMBER, attempting to auto-merge..."
+                    gh pr merge "$PR_NUMBER" --auto --squash
+                  else
+                    echo "No open Changeset PR found, skipping merge."
+                  fi
+              env:
+                  GH_TOKEN: ${{ secrets.GH_PAT }}
